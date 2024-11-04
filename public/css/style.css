@@ -1,12 +1,14 @@
-/* body{
-    color: #ffffff
+body{
+    font-family: "Plus Jakarta Sans", sans-serif  !important;
+     display: flex ;
+    flex-direction: column; 
+     min-height: 100vh; 
 }
 
-body{
-    background-color: #75b3f1;
-} */
 
-
+.container{
+    flex: 1 ;
+}
 .navbar{
     height: 5rem;
     background-color: white;
@@ -22,6 +24,7 @@ body{
 
 
 /* FOOTER  */
+
 .f-info-links a{
     text-decoration: none;
     color: #222222;
@@ -53,4 +56,70 @@ body{
     justify-content:center;
     align-items: space-evenly;
     text-align: center;
+}
+
+
+
+/* Cards */
+.card{
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body{
+    padding: 0 !important;
+}
+
+.card-text p {
+    font-weight: 400 !important;
+}
+
+.listing-link{
+    text-decoration: none;
+}
+
+/* Card Effect */
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    opacity: 0.2;
+    background-color: #ffffff;
+}
+
+/* New Page  */
+
+.add-btn{
+    background-color: #fe424d !important;
+    bottom: none !important;
+}
+
+
+/* Edit Page  */
+.edit-btn{
+    background-color: #fe424d !important;
+    bottom: none !important;
+}
+
+
+/* Show page  */
+.show-img{
+height:30vh ;
+}
+
+
+.btns{
+    display: flex;
+}
+
+.show-card{
+    padding-left: 0;
+    padding-right: 0;
 }
