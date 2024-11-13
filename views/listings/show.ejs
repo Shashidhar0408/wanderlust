@@ -1,7 +1,7 @@
 <% layout('/layouts/boilerplate') -%>
 
 <body>
-     <div class="row mt-3">
+     <div class="row mt-3s">
           <div class="col-8 offset-3">
                <h3><%= listing.title %></h3>
           </div>
@@ -50,11 +50,12 @@
      <p  class="card-text"> <%= review.rating %>stars</p>
 </div>
 <br>
-<form class="mb-3"
-method="post"
- action="/listings/<%= listing._id%>/reviews/<%= review._id %>?_method=delete" >
-     <button class="btn btn-sm btn-dark" >Delete</button>
-</form>
+
+<!-- DELETE FORM  -->
+  <!-- Delete Form -->
+  <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="col-6 offset-3 mb-3">
+     <button type="submit" class="btn btn-danger w-100">Delete</button>
+   </form>
                </div>
           <% } %>
      </div>
