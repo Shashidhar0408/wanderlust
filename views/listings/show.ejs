@@ -1,78 +1,116 @@
 <% layout('/layouts/boilerplate') -%>
 
+<style>
+  #emoji-rating .emoji {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border-radius: 50%;
+    padding: 5px;
+  }
+  #emoji-rating .emoji.selected {
+    background-color: #ffc107;
+    transform: scale(1.4);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  }
+</style>
+
 <body>
-     <div class="row mt-3s">
-          <div class="col-8 offset-3">
-               <h3><%= listing.title %></h3>
+  <div class="text-center mt-4 mb-3">
+    <h2 class="fw-bold"><%= listing.title %></h2>
+</div>
+
+
+  <div class="card col-6 offset-3 show-card listing-card">
+    <img src="<%= listing.image %>" class="card-img-top show-img" alt="Image of <%= listing.title %>">
+    <div class="card-body">
+      <p class="card-text">Owned by <i><%= listing.owner?.username || "Unknown" %></i></p>
+      <p class="card-text"><%= listing.description %></p>
+      <p class="card-text">₹<%= listing.price.toLocaleString("en-IN") %></p>
+      <p class="card-text"><%= listing.location %></p>
+      <p class="card-text"><%= listing.country %></p>
+    </div>
+  </div>
+
+  <br>
+
+  <% if (currUser && listing.owner && listing.owner._id && listing.owner._id.equals(currUser._id)) { %>
+    <div class="btns">
+      <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
+      <form method="post" action="/listings/<%= listing._id %>?_method=delete">
+        <button class="btn btn-dark offset-5">Delete</button>
+      </form>
+    </div>
+  <% } %>
+
+  <div class="col-8 offset-2 my-5">
+    <% if (currUser) { %>
+      <div class="border p-4 rounded shadow-sm bg-light">
+        <h4 class="mb-4 text-dark">📝 Leave a Review</h4>
+        <form action="/listings/<%= listing._id %>/reviews" method="post" class="needs-validation" onsubmit="return validateRating()">
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Your Satisfaction</label>
+            <div id="emoji-rating" class="d-flex justify-content-between fs-3 px-3">
+              <span class="emoji" data-value="1">😡</span>
+              <span class="emoji" data-value="2">😞</span>
+              <span class="emoji" data-value="3">😐</span>
+              <span class="emoji" data-value="4">😊</span>
+              <span class="emoji" data-value="5">🤩</span>
+            </div>
+            <input type="hidden" name="review[rating]" id="ratingInput">
+            <div class="form-text text-danger mt-1 d-none" id="ratingError">Please select a rating</div>
           </div>
-     </div>
-     <div class="card col-6 offset-3 show-card  listing-card">
-          <img src="<%= listing.image %>" class="card-img-top show-img" alt="Image of <%= listing.title %>">
+
+          <div class="mb-3">
+            <label for="comment" class="form-label fw-semibold">Comment</label>
+            <textarea required name="review[comment]" id="comment" cols="30" rows="4" class="form-control" placeholder="Write your honest feedback here..."></textarea>
+            <div class="invalid-feedback">Please add a comment before submitting.</div>
+          </div>
+
+          <button class="btn btn-dark px-4">Submit Review</button>
+        </form>
+      </div>
+      <hr>
+    <% } %>
+
+    <h5 class="my-4">📋 All Reviews</h5>
+    <div class="row">
+      <% for (review of listing.reviews) { %>
+        <div class="card col-md-5 m-2 p-0 shadow-sm">
           <div class="card-body">
-            <p class="card-text" >Owned by <i><%= listing.owner.username %></i> </p>
-               <p class="card-text" >   <%= listing.description %>   </p>
-               <p class="card-text" >  ₹<%= listing.price.toLocaleString("en-IN") %>   </p>
-               <p class="card-text" >  <%= listing.location %>   </p>
-               <p class="card-text" > <%= listing.country %>   </p>
-            
+            <h6 class="card-title fw-bold">@<%= review.author.username %></h6>
+            <p class="card-text"><%= review.comment %></p>
+            <p class="card-text">⭐ <%= review.rating %> / 5</p>
           </div>
-     </div>
-   <br>
-<% if(currUser && listing.owner._id.equals(currUser._id))  { %>
-     <div class="btns">
-          <a 
-          href="/listings/<%= listing._id %>/edit" 
-          class="btn btn-dark col-1 offset-3 edit-btn">
-          Edit</a>
-          <form method="post" action="/listings/<%= listing._id %>?_method=delete">
-               <button class="btn btn-dark offset-5">Delete</button>
+
+          <!-- Delete Form -->
+          <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" class="p-2">
+            <button type="submit" class="btn btn-outline-danger w-100">Delete</button>
           </form>
-     </div>
-<% }%>
+        </div>
+      <% } %>
+    </div>
+  </div>
 
+  <script>
+    const emojis = document.querySelectorAll(".emoji");
+    const ratingInput = document.getElementById("ratingInput");
+    const ratingError = document.getElementById("ratingError");
 
-     <div class="col-8 offset-3 mb-34">
-          <hr>
-          <% if(currUser)  {%>
+    emojis.forEach(emoji => {
+      emoji.addEventListener("click", () => {
+        emojis.forEach(e => e.classList.remove("selected"));
+        emoji.classList.add("selected");
+        ratingInput.value = emoji.dataset.value;
+        ratingError.classList.add("d-none");
+      });
+    });
 
-          <h4>Leave a Review</h4>
-          <form action="/listings/<%= listing._id %>/reviews" method="post" class="needs-validation">
-               <div class="mb-3 mt-3"></div>
-               <div>
-                    <label for="rating" class="form-label">Rating</label>
-                    <input type="range" name="review[rating]" id="rating" min="1" max="5" class="form-range">
-               </div>
-               <div class="mb-3 mt-3">
-                    <label for="comment" class="form-label">comments</label>
-                    <textarea required name="review[comment]" id="comment" cols="30" rows="5" class="form-control" ></textarea>
-                    <div class="invalid-feedback">Please add some comments for review</div>
-               </div>
-             
-               <button class="btn btn-outline-dark">Submit</button>
-          </form>
-          <hr>
-          <% } %>
-<p> <b>All Reviews </b></p>
-<div class="row">
-     <%for(review of listing.reviews){ %>
-          <div class="card col-5 ms-3 mb-3">
-<div class="card-body">
-     <h5 class="card-title">@<%= review.author.username %> </h5>
-     <p class="card-text"> <%= review.comment %> </p>
-     <p  class="card-text"> <%= review.rating %>stars</p>
-</div>
-<br>
-
-<!-- DELETE FORM  -->
-  <!-- Delete Form -->
-  <form
-  class=" mb-3"
-     method="POST"
-     action="/listings/<%= listing._id %>/reviews/<%=review._id%>?_method=DELETE" >
-     <button type="submit" class="btn btn-dark w-100">Delete</button>
-   </form>
-               </div>
-          <% } %>
-     </div>
-</div>
+    function validateRating() {
+      if (!ratingInput.value) {
+        ratingError.classList.remove("d-none");
+        return false;
+      }
+      return true;
+    }
+  </script>
 </body>
