@@ -2,23 +2,24 @@
 <body>
 
     <h3>All Listings</h3>
-    <!-- <form method="get" action="/listings/new" >
-        <button>Create New Listing</button>
-    </form> -->
+
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
        <% for(let listing of allListings)  {%>
-        <a href="/listings/<%= listing._id %> " class="listing-link">
-      <div class="card col listing-card" >
-          <img src="<%= listing.image %>" class="card-img-top" alt="Listing_image" style="height: 20rem;">
-          <div class="card-img-overlay"> </div>
-          <div class="card-body">
-            <p class="card-text"><b>
-              <%= listing.title %> </b>
-              <li> ₹<%= listing.price.toLocaleString("en-IN") %>/night</li>
-            </p>
-          </div>
-        </div>
-      </a>
-        <% } %></div>
+        <a href="/listings/<%= listing._id %>" class="listing-link">
+            <div class="card col listing-card">
+<% if (listing.images && listing.images.length > 0) { %>
+  <img src="<%= listing.images[0].url %>" class="card-img-top" alt="Listing_image" style="height: 20rem;">
+<% } else { %>
+  <img src="/images/default.jpg" class="card-img-top" alt="Default image" style="height: 20rem;">
+<% } %>
+                <div class="card-img-overlay"></div>
+                <div class="card-body">
+                    <p class="card-text"><b><%= listing.title %></b>
+                    <li>₹<%= listing.price.toLocaleString("en-IN") %>/night</li>
+                    </p>
+                </div>
+            </div>
+        </a>
+       <% } %>
+    </div>
 </body>
-

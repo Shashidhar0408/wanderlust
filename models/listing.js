@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Review = require("./reviews")
+const Review = require("./reviews");
+
+const ImageSchema = new Schema({
+  url: String,
+  filename: String,
+});
+
+// Add virtual to auto-generate thumbnail URL (optional, for UI use)
+ImageSchema.virtual("thumbnail").get(function () {
+  return this.url.replace("/upload", "/upload/w_300");
+});
 
 const listingSchema = new Schema({
   title: {
@@ -9,37 +19,33 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    default:
-      "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
-    set: (v) =>
-      v === ""
-        ? "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60"
-        : v,
+  image: {
+  type: ImageSchema,
+  required: true, // Ensures every listing must have a valid image object
+}
+
   },
   price: Number,
   location: String,
   country: String,
-reviews : [
-  {
-    type : Schema.Types.ObjectId,
-    ref : "Review"
-  }
-],
-owner : 
-  {
-    type : Schema.Types.ObjectId,
-    ref : "User"
-  }
-
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
+// Cascade delete reviews when listing is deleted
 listingSchema.post("findOneAndDelete", async (listing) => {
   if (listing) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });
   }
 });
-
 
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;
