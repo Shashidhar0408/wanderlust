@@ -1,2 +1,55 @@
-# In .gitignore
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment files
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Build files
+/dist
+/build
+
+# Uploaded files / local assets (optional)
+uploads/
+temp/
+
+# MongoDB local database files (if any)
+*.mongodb
+
+# IDE specific
+.idea/
+
+# EJS partials compiled (optional, in case you precompile)
+*.ejs.js
+
+# Cloudinary image cache (if saving anything locally)
+cloudinary_cache/
+
+# ZIP archives or temporary dev files
+*.zip
+*.tar
+*.tmp
+
+# Express session or cache dumps (if any)
+sessions/
+.cache/
